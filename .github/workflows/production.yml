@@ -31,10 +31,3 @@ jobs:
               $data = [System.Text.Encoding]::UTF8.GetBytes($md5)
               [System.IO.File]::WriteAllBytes("$( $_.FullName ).md5", $data)
           }
-      - name: Deploy to Cloadflare R2
-        run: |
-          aws s3 sync artifacts s3://oxide-downloads/artifacts/${{ github.event.repository.name }}/${{ github.ref_name }} --endpoint-url ${{ secrets.CLOUDFLARE_R2_ENDPOINT }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.CLOUDFLARE_R2_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.CLOUDFLARE_R2_SECRET }}
-          AWS_DEFAULT_REGION: auto
