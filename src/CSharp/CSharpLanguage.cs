@@ -9,7 +9,9 @@ using Oxide.CompilerServices.Settings;
 using PolySharp.SourceGenerators;
 using Sentry;
 using System.Collections.Immutable;
+using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Oxide.CompilerServices.CSharp
 {
@@ -122,7 +124,13 @@ namespace Oxide.CompilerServices.CSharp
             foreach (var source in data.SourceFiles)
             {
                 string fileName = Path.GetFileName(source.Name);
-                SyntaxTree tree = CSharpSyntaxTree.ParseText(encoding.GetString(source.Data), options, path: fileName, encoding: encoding, cancellationToken: _token);
+
+                string sourceString = Regex.Replace(encoding.GetString(source.Data), @"\\[uU]([0-9A-F]{4})", match =>
+                {
+                    return ((char)int.Parse(match.Value.Substring(2), NumberStyles.HexNumber)).ToString();
+                });
+
+                SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceString, options, path: fileName, encoding: encoding, cancellationToken: _token);
                 trees.Add(source, tree);
                 _logger.LogDebug(Events.Compile, "Added C# file {file} to the project", fileName);
             }
