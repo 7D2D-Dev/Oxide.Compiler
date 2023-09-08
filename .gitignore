@@ -66,6 +66,7 @@ ipch/
 *.psess
 *.vsp
 *.vspx
+*.patch
 
 # Visual Studio add-ins
 ## DotCover code coverage tool
